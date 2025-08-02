@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Register a Pet - Paw-Connect{% endblock %}
+
+{% block extra_js %}
+<script>
+    function previewPetImage(input) {
+        const container = document.getElementById('image-preview-container');
+        const preview = document.getElementById('pet-image-preview');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                container.classList.remove('d-none');
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            preview.src = '';
+            container.classList.add('d-none');
+        }
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h4 mb-0">Register a Pet for Adoption</h2>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('add_pet') }}" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+
+                        <h5 class="mb-3">Basic Information</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ form.name.label(class="form-label") }}
+                                {% if form.name.errors %}
+                                    {{ form.name(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.name(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.species.label(class="form-label") }}
+                                {% if form.species.errors %}
+                                    {{ form.species(class="form-select is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.species.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.species(class="form-select") }}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                {{ form.breed.label(class="form-label") }}
+                                {{ form.breed(class="form-control") }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.age.label(class="form-label") }}
+                                {{ form.age(class="form-control") }}
+                                <div class="form-text">Enter age in months</div>
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.gender.label(class="form-label") }}
+                                {{ form.gender(class="form-select") }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control", rows=4, placeholder="Provide a detailed description of your pet's personality, likes, dislikes, etc.") }}
+                        </div>
+
+                        <hr class="my-4">
+                        <h5 class="mb-3">Health & Behavior</h5>
+
+                        <div class="mb-3">
+                            {{ form.health_info.label(class="form-label") }}
+                            {{ form.health_info(class="form-control", rows=3, placeholder="Include information about vaccinations, medical history, and any special needs.") }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.behavior_info.label(class="form-label") }}
+                            {{ form.behavior_info(class="form-control", rows=3, placeholder="Describe your pet's behavior, training level, and how they get along with other animals or children.") }}
+                        </div>
+
+                        <hr class="my-4">
+                        <h5 class="mb-3">Upload a Photo</h5>
+
+                        <div class="mb-4">
+                            {{ form.image.label(class="form-label") }}
+                            {{ form.image(class="form-control", onchange="previewPetImage(this)") }}
+                            <div class="form-text">Upload a clear photo of your pet. Max file size: 5MB. Allowed formats: JPG, JPEG, PNG.</div>
+                            <div id="image-preview-container" class="mt-3 d-none">
+                                <h6>Image Preview:</h6>
+                                <img id="pet-image-preview" src="#" alt="Pet Image Preview" class="img-thumbnail" style="max-height: 200px;">
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

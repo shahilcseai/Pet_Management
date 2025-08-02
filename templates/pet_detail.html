@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}{{ pet.name }} - Paw-Connect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Pet Images & Description -->
+            <div class="card mb-4">
+                <div class="card-body p-0">
+                    <div class="pet-detail-image">
+                        {% if pet.image_filename %}
+                            <img src="{{ url_for('static', filename='uploads/' + pet.image_filename) }}" alt="{{ pet.name }}" class="img-fluid">
+                        {% else %}
+                            <img src="{% if pet.species == 'dog' %}https://images.unsplash.com/photo-1730665231567-2b176b998e39{% elif pet.species == 'cat' %}https://images.unsplash.com/photo-1443806798002-651c462956ff{% else %}https://images.unsplash.com/photo-1689969936663-8ba5ba3c1d64{% endif %}" alt="{{ pet.name }}" class="img-fluid">
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pet Details -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">About {{ pet.name }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="text-primary">Basic Information</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Species</span>
+                                    <span class="badge bg-primary rounded-pill">{{ pet.species.capitalize() }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Breed</span>
+                                    <span>{{ pet.breed or 'Mixed/Unknown' }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Age</span>
+                                    <span>
+                                        {% if pet.age %}
+                                            {% if pet.age < 12 %}{{ pet.age }} months
+                                            {% else %}{{ (pet.age / 12)|int }} year{% if (pet.age / 12)|int != 1 %}s{% endif %}
+                                            {% endif %}
+                                        {% else %}
+                                            Unknown
+                                        {% endif %}
+                                    </span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Gender</span>
+                                    <span>{{ pet.gender or 'Unknown' }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Status</span>
+                                    <span class="badge {% if pet.adoption_status == 'available' %}bg-success{% elif pet.adoption_status == 'pending' %}bg-warning{% else %}bg-danger{% endif %} rounded-pill">
+                                        {{ pet.adoption_status.capitalize() }}
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-primary">Added By</h5>
+                            <div class="card border-0 bg-light p-3">
+                                {% if pet.owner %}
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <i class="fas fa-user-circle fa-3x text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">{{ pet.owner.username }}</h6>
+                                            <p class="small text-muted mb-0">Member since {{ pet.owner.created_at.strftime('%B %d, %Y') }}</p>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <i class="fas fa-users fa-3x text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">Paw-Connect Shelter</h6>
+                                            <p class="small text-muted mb-0">Rescue Organization</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="text-primary">Description</h5>
+                    <p>{{ pet.description or 'No description provided.' }}</p>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="text-primary">Health Information</h5>
+                            <p>{{ pet.health_info or 'No health information provided.' }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-primary">Behavior & Temperament</h5>
+                            <p>{{ pet.behavior_info or 'No behavior information provided.' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Adoption Call to Action -->
+            <div class="card mb-4 sticky-top" style="top: 20px; z-index: 999;">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Interested in {{ pet.name }}?</h4>
+                </div>
+                <div class="card-body">
+                    <p>{{ pet.name }} is waiting for a loving home! Contact us to schedule a meet and greet.</p>
+                    
+                    {% if pet.adoption_status == 'available' %}
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-lg">
+                                <i class="fas fa-heart me-2"></i> Start Adoption Process
+                            </button>
+                            <button class="btn btn-outline-primary">
+                                <i class="fas fa-phone me-2"></i> Contact About {{ pet.name }}
+                            </button>
+                        </div>
+                    {% elif pet.adoption_status == 'pending' %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-clock me-2"></i> This pet has a pending adoption application.
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-outline-primary">
+                                <i class="fas fa-heart me-2"></i> Join Waiting List
+                            </button>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-home me-2"></i> This pet has been adopted.
+                        </div>
+                        <div class="d-grid">
+                            <a href="{{ url_for('pet_listing') }}" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i> Find Another Pet
+                            </a>
+                        </div>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <div class="text-center">
+                        <p class="mb-1"><i class="fas fa-info-circle me-2"></i> Adoption Fee: $75-$150</p>
+                        <small class="text-muted">All pets are spayed/neutered, vaccinated, and microchipped before adoption.</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- More Pets -->
+            {% if other_pets %}
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">More Pets From This Owner</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for other_pet in other_pets %}
+                        <li class="list-group-item p-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    {% if other_pet.image_filename %}
+                                        <img src="{{ url_for('static', filename='uploads/' + other_pet.image_filename) }}" alt="{{ other_pet.name }}" class="img-thumbnail" style="width: 70px; height: 70px; object-fit: cover;">
+                                    {% else %}
+                                        <img src="{% if other_pet.species == 'dog' %}https://images.unsplash.com/photo-1730665231567-2b176b998e39{% elif other_pet.species == 'cat' %}https://images.unsplash.com/photo-1443806798002-651c462956ff{% else %}https://images.unsplash.com/photo-1689969936663-8ba5ba3c1d64{% endif %}" alt="{{ other_pet.name }}" class="img-thumbnail" style="width: 70px; height: 70px; object-fit: cover;">
+                                    {% endif %}
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">{{ other_pet.name }}</h6>
+                                    <p class="small text-muted mb-1">{{ other_pet.breed or other_pet.species.capitalize() }}</p>
+                                    <a href="{{ url_for('pet_detail', pet_id=other_pet.id) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

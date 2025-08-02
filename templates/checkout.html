@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Paw-Connect Pet Store{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Checkout</h1>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Order Items</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if item.product.image_filename %}
+                                        <img src="{{ url_for('static', filename='uploads/' + item.product.image_filename) }}" 
+                                             class="me-3" alt="{{ item.product.name }}" style="width: 60px; height: 60px; object-fit: cover;">
+                                        {% else %}
+                                        <div class="placeholder-img d-flex justify-content-center align-items-center bg-light me-3" style="width: 60px; height: 60px;">
+                                            <i class="fas fa-box text-secondary"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div>
+                                            <h6 class="mb-0">{{ item.product.name }}</h6>
+                                            <small class="text-muted">{{ item.product.category }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>${{ "%.2f"|format(item.product.price) }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>${{ "%.2f"|format(item.product.price * item.quantity) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Shipping Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Ship to:</strong></p>
+                    <address>
+                        {{ current_user.first_name }} {{ current_user.last_name }}<br>
+                        {{ current_user.address }}<br>
+                        {{ current_user.city }}, {{ current_user.state }} {{ current_user.zip_code }}<br>
+                        <strong>Phone:</strong> {{ current_user.phone }}
+                    </address>
+                    
+                    <div class="mt-3">
+                        <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-edit me-2"></i>Update Shipping Information
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Subtotal</span>
+                        <span>${{ "%.2f"|format(total_price) }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Shipping</span>
+                        <span>${{ "%.2f"|format(shipping) }}</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong>Total</strong>
+                        <strong>${{ "%.2f"|format(total_price + shipping) }}</strong>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('checkout') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Payment Method</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" value="credit_card" id="creditCard" checked>
+                                <label class="form-check-label" for="creditCard">
+                                    Credit Card
+                                </label>
+                            </div>
+                            
+                            <div id="creditCardDetails" class="mt-3">
+                                <div class="mb-3">
+                                    <label for="cardNumber" class="form-label">Card Number</label>
+                                    <input type="text" class="form-control" id="cardNumber" placeholder="**** **** **** ****" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="expiryDate" class="form-label">Expiry Date</label>
+                                        <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="cvv" class="form-label">CVV</label>
+                                        <input type="text" class="form-control" id="cvv" placeholder="***" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nameOnCard" class="form-label">Name on Card</label>
+                                    <input type="text" class="form-control" id="nameOnCard" 
+                                           value="{{ current_user.first_name }} {{ current_user.last_name }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 mt-3">
+                            <i class="fas fa-lock me-2"></i>Place Order
+                        </button>
+                    </form>
+                    
+                    <div class="mt-3 text-center">
+                        <small class="text-muted">
+                            <i class="fas fa-lock me-1"></i>Your payment information is secure and encrypted
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-grid mt-3">
+                <a href="{{ url_for('view_cart') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Cart
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Payment method toggle
+        const paymentMethodRadios = document.querySelectorAll('input[name="payment_method"]');
+        const creditCardDetails = document.getElementById('creditCardDetails');
+        
+        paymentMethodRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'credit_card') {
+                    creditCardDetails.style.display = 'block';
+                } else {
+                    creditCardDetails.style.display = 'none';
+                }
+            });
+        });
+        
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(event) {
+            // For demo purposes, we'll just simulate a payment
+            // In a real application, you'd integrate with a payment processor
+            
+            // Set a timeout to simulate processing
+            event.preventDefault();
+            
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Processing...';
+            
+            setTimeout(() => {
+                this.submit();
+            }, 1500);
+        });
+    });
+</script>
+{% endblock %}

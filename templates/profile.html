@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - Paw-Connect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Profile Information</h4>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-user-circle fa-6x text-primary"></i>
+                    </div>
+                    <h4>{{ current_user.username }}</h4>
+                    <p class="text-muted">Member since {{ current_user.created_at.strftime('%B %d, %Y') }}</p>
+                    
+                    <hr>
+                    
+                    <div class="text-start">
+                        <p><i class="fas fa-envelope me-2 text-primary"></i> {{ current_user.email }}</p>
+                        {% if current_user.phone %}
+                            <p><i class="fas fa-phone me-2 text-primary"></i> {{ current_user.phone }}</p>
+                        {% endif %}
+                        {% if current_user.address %}
+                            <p><i class="fas fa-map-marker-alt me-2 text-primary"></i> 
+                                {{ current_user.address }}{% if current_user.city %}, {{ current_user.city }}{% endif %}
+                                {% if current_user.state %}, {{ current_user.state }}{% endif %}
+                                {% if current_user.zip_code %} {{ current_user.zip_code }}{% endif %}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- My Donations -->
+            {% if user_donations %}
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">My Donations</h4>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for donation in user_donations %}
+                            <li class="list-group-item">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <p class="mb-0"><strong>${{ "%.2f"|format(donation.amount) }}</strong></p>
+                                        <small class="text-muted">{{ donation.donation_date.strftime('%B %d, %Y') }}</small>
+                                    </div>
+                                    <div>
+                                        <span class="badge {% if donation.is_anonymous %}bg-secondary{% else %}bg-success{% endif %}">
+                                            {% if donation.is_anonymous %}Anonymous{% else %}Public{% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer bg-light text-center">
+                    <a href="{{ url_for('donate') }}" class="btn btn-outline-primary">Make Another Donation</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-lg-8">
+            <!-- Edit Profile Form -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Edit Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('profile') }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ form.username.label(class="form-label") }}
+                                {% if form.username.errors %}
+                                    {{ form.username(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.username.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.username(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                {{ form.email.label(class="form-label") }}
+                                {% if form.email.errors %}
+                                    {{ form.email(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.email.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.email(class="form-control") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ form.first_name.label(class="form-label") }}
+                                {{ form.first_name(class="form-control") }}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                {{ form.last_name.label(class="form-label") }}
+                                {{ form.last_name(class="form-control") }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.phone.label(class="form-label") }}
+                            {{ form.phone(class="form-control") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.address.label(class="form-label") }}
+                            {{ form.address(class="form-control") }}
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-5">
+                                {{ form.city.label(class="form-label") }}
+                                {{ form.city(class="form-control") }}
+                            </div>
+                            
+                            <div class="col-md-4">
+                                {{ form.state.label(class="form-label") }}
+                                {{ form.state(class="form-control") }}
+                            </div>
+                            
+                            <div class="col-md-3">
+                                {{ form.zip_code.label(class="form-label") }}
+                                {{ form.zip_code(class="form-control") }}
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- My Pets -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">My Pets</h4>
+                    <a href="{{ url_for('add_pet') }}" class="btn btn-light btn-sm">
+                        <i class="fas fa-plus me-1"></i> Add Pet
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if user_pets %}
+                        <div class="row">
+                            {% for pet in user_pets %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card">
+                                        <div class="card-body p-0">
+                                            <div class="d-flex">
+                                                <div style="width: 100px; height: 100px; overflow: hidden;">
+                                                    {% if pet.image_filename %}
+                                                        <img src="{{ url_for('static', filename='uploads/' + pet.image_filename) }}" alt="{{ pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    {% else %}
+                                                        <img src="{% if pet.species == 'dog' %}https://images.unsplash.com/photo-1730665231567-2b176b998e39{% elif pet.species == 'cat' %}https://images.unsplash.com/photo-1443806798002-651c462956ff{% else %}https://images.unsplash.com/photo-1689969936663-8ba5ba3c1d64{% endif %}" alt="{{ pet.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    {% endif %}
+                                                </div>
+                                                <div class="p-3 flex-grow-1">
+                                                    <h5 class="mb-1">{{ pet.name }}</h5>
+                                                    <p class="small text-muted mb-2">{{ pet.species.capitalize() }}{% if pet.breed %} - {{ pet.breed }}{% endif %}</p>
+                                                    <span class="badge {% if pet.adoption_status == 'available' %}bg-success{% elif pet.adoption_status == 'pending' %}bg-warning{% else %}bg-info{% endif %}">
+                                                        {{ pet.adoption_status.capitalize() }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-light p-2">
+                                            <div class="btn-group btn-group-sm w-100">
+                                                <a href="{{ url_for('pet_detail', pet_id=pet.id) }}" class="btn btn-outline-primary">
+                                                    <i class="fas fa-eye me-1"></i> View
+                                                </a>
+                                                <button type="button" class="btn btn-outline-secondary">
+                                                    <i class="fas fa-edit me-1"></i> Edit
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <div class="mb-3">
+                                <i class="fas fa-paw fa-4x text-muted"></i>
+                            </div>
+                            <h4>No pets registered yet</h4>
+                            <p class="mb-4">You haven't registered any pets for adoption.</p>
+                            <a href="{{ url_for('add_pet') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i> Register a Pet
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

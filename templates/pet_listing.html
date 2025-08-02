@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Adopt a Pet - Paw-Connect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <h1 class="display-5 mb-3">Find Your <span class="text-primary">Perfect Match</span></h1>
+            <p class="lead">Browse our available pets and discover your new best friend.</p>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Search & Filter</h5>
+                    <form method="GET" action="{{ url_for('pet_listing') }}">
+                        <div class="row g-3">
+                            <div class="col-md-7">
+                                {{ form.query(class="form-control", placeholder="Search by name, breed, etc.") }}
+                            </div>
+                            <div class="col-md-5">
+                                {{ form.species(class="form-select") }}
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search me-2"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if pets.items %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+            {% for pet in pets.items %}
+                <div class="col">
+                    <div class="card pet-card h-100">
+                        {% if pet.image_filename %}
+                            <img src="{{ url_for('static', filename='uploads/' + pet.image_filename) }}" class="card-img-top pet-thumbnail" alt="{{ pet.name }}">
+                        {% else %}
+                            <img src="{% if pet.species == 'dog' %}https://images.unsplash.com/photo-1730665231567-2b176b998e39{% elif pet.species == 'cat' %}https://images.unsplash.com/photo-1443806798002-651c462956ff{% else %}https://images.unsplash.com/photo-1689969936663-8ba5ba3c1d64{% endif %}" class="card-img-top pet-thumbnail" alt="{{ pet.name }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <div class="pet-badge">{{ pet.species.capitalize() }}</div>
+                            <h5 class="card-title">{{ pet.name }}</h5>
+                            <p class="text-muted mb-2">{{ pet.breed or pet.species.capitalize() }}</p>
+                            <p class="mb-2">
+                                <i class="fas fa-paw me-1 text-primary"></i> 
+                                {% if pet.age %}
+                                    {% if pet.age < 12 %}{{ pet.age }} months
+                                    {% else %}{{ (pet.age / 12)|int }} year{% if (pet.age / 12)|int != 1 %}s{% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    Age unknown
+                                {% endif %}
+                            </p>
+                            <p class="mb-2">
+                                <i class="fas fa-venus-mars me-1 text-primary"></i> 
+                                {{ pet.gender or 'Unknown' }}
+                            </p>
+                            <p class="card-text">{{ pet.description|truncate(100) }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0">
+                            <a href="{{ url_for('pet_detail', pet_id=pet.id) }}" class="btn btn-outline-primary w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if pets.pages > 1 %}
+            <nav aria-label="Page navigation" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    {% if pets.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('pet_listing', page=pets.prev_num, query=form.query.data, species=form.species.data) }}">
+                                <span aria-hidden="true">&laquo;</span> Previous
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link"><span aria-hidden="true">&laquo;</span> Previous</span>
+                        </li>
+                    {% endif %}
+
+                    {% for page_num in pets.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                        {% if page_num %}
+                            {% if pets.page == page_num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ page_num }}</span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('pet_listing', page=page_num, query=form.query.data, species=form.species.data) }}">{{ page_num }}</a>
+                                </li>
+                            {% endif %}
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if pets.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('pet_listing', page=pets.next_num, query=form.query.data, species=form.species.data) }}">
+                                Next <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Next <span aria-hidden="true">&raquo;</span></span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-search fa-4x text-muted"></i>
+            </div>
+            <h3>No pets found matching your criteria</h3>
+            <p class="lead">Try adjusting your search filters or check back later for new arrivals.</p>
+            <a href="{{ url_for('pet_listing') }}" class="btn btn-primary mt-3">View All Pets</a>
+        </div>
+    {% endif %}
+
+    <div class="text-center mt-5">
+        <div class="card bg-light border-0">
+            <div class="card-body p-5">
+                <h3 class="mb-4">Have a Pet That Needs a New Home?</h3>
+                <p class="lead mb-4">If you can no longer care for your pet, we can help find them a loving new family.</p>
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('add_pet') }}" class="btn btn-primary btn-lg">Put Your Pet Up for Adoption</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Sign In to Register a Pet</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

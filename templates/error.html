@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Error - Paw-Connect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center">
+        <div class="mb-4">
+            <i class="fas fa-exclamation-triangle fa-5x text-warning"></i>
+        </div>
+        
+        {% if error_message %}
+            <h1 class="display-5 mb-4">{{ error_message }}</h1>
+        {% else %}
+            <h1 class="display-5 mb-4">Oops! Something went wrong</h1>
+        {% endif %}
+        
+        <p class="lead">We're sorry for the inconvenience. Please try again later or contact us if the problem persists.</p>
+        
+        <div class="mt-5">
+            <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg me-2">
+                <i class="fas fa-home me-2"></i> Return Home
+            </a>
+            <a href="javascript:history.back()" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-arrow-left me-2"></i> Go Back
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

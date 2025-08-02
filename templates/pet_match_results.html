@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Pet Matches - Paw-Connect{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card shadow rounded-3 border-0 mt-3 mb-5">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h3 mb-0"><i class="fas fa-heart me-2"></i>Your Perfect Pet Matches</h1>
+                </div>
+                <div class="card-body p-4">
+                    <p class="lead mb-4">
+                        {% if matching_pets|length > 0 %}
+                            We've found {{ matching_pets|length }} potential pet matches for you based on your preferences!
+                        {% else %}
+                            We couldn't find any matches based on your current preferences. Please try adjusting your criteria.
+                        {% endif %}
+                    </p>
+                    
+                    <!-- Preferences summary -->
+                    <div class="bg-light p-3 mb-4 rounded">
+                        <h4 class="h5 mb-3 text-primary"><i class="fas fa-search me-2"></i>Your Search Preferences</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p><strong>Pet type:</strong> {{ preferences.species.capitalize() }}</p>
+                                <p><strong>Age preference:</strong> {{ preferences.age_preference.capitalize() }}</p>
+                                <p><strong>Gender preference:</strong> {{ preferences.gender_preference.capitalize() if preferences.gender_preference != 'any' else 'Any' }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Size preference:</strong> {{ preferences.size_preference.capitalize() if preferences.size_preference != 'any' else 'Any' }}</p>
+                                <p><strong>Energy level:</strong> {{ preferences.energy_level.capitalize() if preferences.energy_level != 'any' else 'Any' }}</p>
+                                <p><strong>Good with children:</strong> {{ 'Yes' if preferences.good_with_children else 'Not necessary' }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Good with other pets:</strong> {{ 'Yes' if preferences.good_with_other_pets else 'Not necessary' }}</p>
+                                <p><strong>Special needs:</strong> {{ 'Yes' if preferences.special_needs else 'No' }}</p>
+                                <p><strong>Living environment:</strong> {{ preferences.living_environment.replace('_', ' ').capitalize() }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <a href="{{ url_for('pet_match') }}" class="btn btn-outline-primary"><i class="fas fa-edit me-2"></i>Refine Search</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Results -->
+                    {% if matching_pets|length > 0 %}
+                        <h4 class="h5 mb-3 text-primary"><i class="fas fa-paw me-2"></i>Your Matches</h4>
+                        
+                        <div class="row">
+                            {% for pet, score in matching_pets %}
+                                <div class="col-md-6 col-lg-4 mb-4">
+                                    <div class="card h-100 shadow-sm hover-lift">
+                                        <div class="position-relative">
+                                            {% if pet.image_filename %}
+                                                <img src="{{ url_for('static', filename='uploads/' + pet.image_filename) }}" 
+                                                    class="card-img-top" alt="{{ pet.name }}"
+                                                    style="height: 200px; object-fit: cover;">
+                                            {% else %}
+                                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                                                    style="height: 200px;">
+                                                    <i class="fas fa-paw fa-3x text-secondary"></i>
+                                                </div>
+                                            {% endif %}
+                                            
+                                            <!-- Match score badge -->
+                                            <div class="position-absolute top-0 end-0 p-2">
+                                                <div class="match-score-badge 
+                                                    {% if score >= 90 %}bg-success{% elif score >= 70 %}bg-primary{% elif score >= 50 %}bg-warning{% else %}bg-secondary{% endif %}
+                                                    text-white rounded-circle d-flex align-items-center justify-content-center">
+                                                    <span class="fs-5 fw-bold">{{ score }}%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ pet.name }}</h5>
+                                            <p class="card-text text-muted">
+                                                {{ pet.breed }} &bull; 
+                                                {{ (pet.age / 12)|round|int }} years old &bull;
+                                                {{ pet.gender.capitalize() }}
+                                            </p>
+                                            <p class="card-text small mb-2">
+                                                {{ pet.description|truncate(100) }}
+                                            </p>
+                                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                                <div>
+                                                    {% if pet.good_with_children %}
+                                                        <span class="badge bg-info text-dark me-1" title="Good with children">
+                                                            <i class="fas fa-child"></i>
+                                                        </span>
+                                                    {% endif %}
+                                                    
+                                                    {% if pet.good_with_other_pets %}
+                                                        <span class="badge bg-info text-dark me-1" title="Good with other pets">
+                                                            <i class="fas fa-dog"></i>
+                                                        </span>
+                                                    {% endif %}
+                                                    
+                                                    {% if pet.energy_level == 'high' %}
+                                                        <span class="badge bg-danger text-white me-1" title="High energy">
+                                                            <i class="fas fa-bolt"></i> High energy
+                                                        </span>
+                                                    {% elif pet.energy_level == 'medium' %}
+                                                        <span class="badge bg-warning text-dark me-1" title="Medium energy">
+                                                            <i class="fas fa-walking"></i> Medium energy
+                                                        </span>
+                                                    {% elif pet.energy_level == 'low' %}
+                                                        <span class="badge bg-success text-white me-1" title="Low energy">
+                                                            <i class="fas fa-couch"></i> Low energy
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                                <a href="{{ url_for('pet_detail', pet_id=pet.id) }}" class="btn btn-sm btn-primary">View</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center p-5">
+                            <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+                            <h3>No Matches Found</h3>
+                            <p class="lead">Try adjusting your preferences to find more potential matches.</p>
+                            <a href="{{ url_for('pet_match') }}" class="btn btn-primary mt-3">Update Preferences</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .match-score-badge {
+        width: 50px;
+        height: 50px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .hover-lift {
+        transition: transform 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}

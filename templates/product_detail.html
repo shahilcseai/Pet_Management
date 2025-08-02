@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - Paw-Connect Pet Store{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-5">
+            {% if product.image_filename %}
+            <img src="{{ url_for('static', filename='uploads/' + product.image_filename) }}" class="img-fluid rounded product-img" alt="{{ product.name }}">
+            {% else %}
+            <div class="placeholder-img d-flex justify-content-center align-items-center bg-light rounded" style="height: 400px;">
+                <i class="fas fa-box fa-4x text-secondary"></i>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-7">
+            <h1 class="mb-3">{{ product.name }}</h1>
+            <p class="badge bg-info mb-3">{{ product.category }}</p>
+            
+            <h3 class="text-primary mb-3">${{ "%.2f"|format(product.price) }}</h3>
+            
+            <div class="mb-4">
+                <p>{{ product.description|safe }}</p>
+            </div>
+            
+            <div class="mb-4">
+                <p><strong>Availability:</strong> 
+                {% if product.stock > 0 %}
+                <span class="text-success">In Stock ({{ product.stock }} available)</span>
+                {% else %}
+                <span class="text-danger">Out of Stock</span>
+                {% endif %}
+                </p>
+            </div>
+
+            <form method="POST" action="{{ url_for('add_to_cart', product_id=product.id) }}">
+                <div class="input-group mb-4" style="max-width: 200px;">
+                    <span class="input-group-text">Quantity</span>
+                    <input type="number" name="quantity" class="form-control" value="1" min="1" max="{{ product.stock }}" required>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-block">
+                    <button type="submit" class="btn btn-primary btn-lg" {% if product.stock <= 0 %}disabled{% endif %}>
+                        <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                    </button>
+                    <a href="{{ url_for('products') }}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Products
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Related Products -->
+    <div class="mt-5">
+        <h3 class="mb-4">You Might Also Like</h3>
+        <div class="row">
+            {% for related in related_products %}
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    {% if related.image_filename %}
+                    <img src="{{ url_for('static', filename='uploads/' + related.image_filename) }}" class="card-img-top" alt="{{ related.name }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="placeholder-img d-flex justify-content-center align-items-center bg-light" style="height: 200px;">
+                        <i class="fas fa-box fa-2x text-secondary"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ related.name }}</h5>
+                        <p class="card-text text-primary">${{ "%.2f"|format(related.price) }}</p>
+                        <a href="{{ url_for('product_detail', product_id=related.id) }}" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}Your Cart - Paw-Connect Pet Store{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Your Shopping Cart</h1>
+    
+    {% if cart_items %}
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                            <tr id="cart-item-{{ item.id }}">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if item.product.image_filename %}
+                                        <img src="{{ url_for('static', filename='uploads/' + item.product.image_filename) }}" 
+                                             class="me-3" alt="{{ item.product.name }}" style="width: 60px; height: 60px; object-fit: cover;">
+                                        {% else %}
+                                        <div class="placeholder-img d-flex justify-content-center align-items-center bg-light me-3" style="width: 60px; height: 60px;">
+                                            <i class="fas fa-box text-secondary"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div>
+                                            <h6 class="mb-0">
+                                                <a href="{{ url_for('product_detail', product_id=item.product.id) }}" class="text-decoration-none">
+                                                    {{ item.product.name }}
+                                                </a>
+                                            </h6>
+                                            <small class="text-muted">{{ item.product.category }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>${{ "%.2f"|format(item.product.price) }}</td>
+                                <td>
+                                    <div class="input-group input-group-sm" style="width: 100px;">
+                                        <button class="btn btn-outline-secondary quantity-decrease" 
+                                                data-item-id="{{ item.id }}" type="button">-</button>
+                                        <input type="number" class="form-control text-center item-quantity" 
+                                               value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" 
+                                               data-item-id="{{ item.id }}" readonly>
+                                        <button class="btn btn-outline-secondary quantity-increase" 
+                                                data-item-id="{{ item.id }}" type="button">+</button>
+                                    </div>
+                                </td>
+                                <td class="item-subtotal">${{ "%.2f"|format(item.product.price * item.quantity) }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger remove-item" 
+                                            data-item-id="{{ item.id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('products') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                </a>
+                <button id="clear-cart" class="btn btn-outline-danger">
+                    <i class="fas fa-trash me-2"></i>Clear Cart
+                </button>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Subtotal</span>
+                        <span id="cart-subtotal">${{ "%.2f"|format(total_price) }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Shipping</span>
+                        <span id="shipping-cost">${{ "%.2f"|format(shipping) }}</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong>Total</strong>
+                        <strong id="cart-total">${{ "%.2f"|format(total_price + shipping) }}</strong>
+                    </div>
+                    
+                    <form id="checkout-form" method="POST" action="{{ url_for('checkout') }}">
+                        <button type="submit" class="btn btn-primary w-100 mt-3">
+                            <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card text-center py-5">
+        <div class="card-body">
+            <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+            <h3>Your cart is empty</h3>
+            <p class="text-muted">Looks like you haven't added any products to your cart yet.</p>
+            <a href="{{ url_for('products') }}" class="btn btn-primary mt-3">
+                <i class="fas fa-shopping-bag me-2"></i>Browse Products
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Update item quantity
+    function updateItemQuantity(itemId, newQuantity) {
+        fetch(`/cart/update/${itemId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ quantity: newQuantity })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the UI
+                const itemRow = document.getElementById(`cart-item-${itemId}`);
+                const subtotalElement = itemRow.querySelector('.item-subtotal');
+                subtotalElement.textContent = `$${data.subtotal.toFixed(2)}`;
+                
+                // Update cart totals
+                document.getElementById('cart-subtotal').textContent = `$${data.cart_subtotal.toFixed(2)}`;
+                document.getElementById('cart-total').textContent = `$${data.cart_total.toFixed(2)}`;
+                
+                // Update cart count if available
+                const cartCountElement = document.getElementById('cart-count');
+                if (cartCountElement) {
+                    cartCountElement.textContent = data.cart_count;
+                }
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Remove item from cart
+    function removeItem(itemId) {
+        fetch(`/cart/remove/${itemId}`, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the item row
+                const itemRow = document.getElementById(`cart-item-${itemId}`);
+                itemRow.remove();
+                
+                // Update cart totals
+                document.getElementById('cart-subtotal').textContent = `$${data.cart_subtotal.toFixed(2)}`;
+                document.getElementById('cart-total').textContent = `$${data.cart_total.toFixed(2)}`;
+                
+                // Update cart count if available
+                const cartCountElement = document.getElementById('cart-count');
+                if (cartCountElement) {
+                    cartCountElement.textContent = data.cart_count;
+                    if (data.cart_count <= 0) {
+                        cartCountElement.classList.add('d-none');
+                    }
+                }
+                
+                // If cart is empty, reload the page
+                if (data.cart_empty) {
+                    window.location.reload();
+                }
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        // Quantity decrease buttons
+        document.querySelectorAll('.quantity-decrease').forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.dataset.itemId;
+                const quantityInput = document.querySelector(`.item-quantity[data-item-id="${itemId}"]`);
+                let newQuantity = parseInt(quantityInput.value) - 1;
+                if (newQuantity >= 1) {
+                    quantityInput.value = newQuantity;
+                    updateItemQuantity(itemId, newQuantity);
+                }
+            });
+        });
+        
+        // Quantity increase buttons
+        document.querySelectorAll('.quantity-increase').forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.dataset.itemId;
+                const quantityInput = document.querySelector(`.item-quantity[data-item-id="${itemId}"]`);
+                let newQuantity = parseInt(quantityInput.value) + 1;
+                const maxQuantity = parseInt(quantityInput.getAttribute('max'));
+                if (newQuantity <= maxQuantity) {
+                    quantityInput.value = newQuantity;
+                    updateItemQuantity(itemId, newQuantity);
+                } else {
+                    alert(`Sorry, only ${maxQuantity} items available in stock.`);
+                }
+            });
+        });
+        
+        // Remove item buttons
+        document.querySelectorAll('.remove-item').forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.dataset.itemId;
+                if (confirm('Are you sure you want to remove this item from your cart?')) {
+                    removeItem(itemId);
+                }
+            });
+        });
+        
+        // Clear cart button
+        document.getElementById('clear-cart').addEventListener('click', function() {
+            if (confirm('Are you sure you want to clear your entire cart?')) {
+                fetch('/cart/clear', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

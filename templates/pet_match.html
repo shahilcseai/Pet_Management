@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Find Your Perfect Pet Match - Paw-Connect{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow rounded-3 border-0 mt-3 mb-5">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h3 mb-0"><i class="fas fa-heart me-2"></i>Find Your Perfect Pet Match</h1>
+                </div>
+                <div class="card-body p-4">
+                    <p class="lead mb-4">Answer a few questions about your preferences and lifestyle to find the perfect pet companion for you!</p>
+                    
+                    <form method="POST" action="" class="needs-validation" novalidate>
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-4">
+                            <h4 class="h5 mb-3 text-primary"><i class="fas fa-paw me-2"></i>Pet Basics</h4>
+                            
+                            <div class="mb-3">
+                                {{ form.species.label(class="form-label") }}
+                                {{ form.species(class="form-select") }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.age_preference.label(class="form-label") }}
+                                {{ form.age_preference(class="form-select") }}
+                                <div class="form-text">Baby: under 1 year, Adult: 1-7 years, Senior: over 7 years</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.gender_preference.label(class="form-label") }}
+                                {{ form.gender_preference(class="form-select") }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h4 class="h5 mb-3 text-primary"><i class="fas fa-home me-2"></i>Your Lifestyle & Environment</h4>
+                            
+                            <div class="mb-3">
+                                {{ form.living_environment.label(class="form-label") }}
+                                {{ form.living_environment(class="form-select") }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.time_availability.label(class="form-label") }}
+                                {{ form.time_availability(class="form-select") }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.good_with_children.label(class="form-label") }}
+                                {{ form.good_with_children(class="form-select") }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.good_with_other_pets.label(class="form-label") }}
+                                {{ form.good_with_other_pets(class="form-select") }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h4 class="h5 mb-3 text-primary"><i class="fas fa-star me-2"></i>Pet Characteristics</h4>
+                            
+                            <div class="mb-3">
+                                {{ form.size_preference.label(class="form-label") }}
+                                {{ form.size_preference(class="form-select") }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.energy_level.label(class="form-label") }}
+                                {{ form.energy_level(class="form-select") }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.special_needs.label(class="form-label") }}
+                                {{ form.special_needs(class="form-select") }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {{ form.training_preference.label(class="form-label") }}
+                                {{ form.training_preference(class="form-select") }}
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            {{ form.submit(class="btn btn-primary btn-lg px-5") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Form validation
+    (function() {
+        'use strict';
+        
+        // Fetch all forms that need validation
+        var forms = document.querySelectorAll('.needs-validation');
+        
+        // Loop over them and prevent submission if validation fails
+        Array.prototype.slice.call(forms).forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+{% endblock %}

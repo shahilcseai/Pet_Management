@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}Donate - Paw-Connect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-lg-6">
+            <h1 class="display-5 mb-4">Support Our <span class="text-primary">Mission</span></h1>
+            <p class="lead">Your donations help us rescue, care for, and rehome animals in need.</p>
+            <p>Every contribution makes a difference in the lives of animals awaiting their forever homes. Donations support medical care, shelter, food, and our adoption programs.</p>
+            <div class="mt-4">
+                <img src="https://images.unsplash.com/photo-1494256997604-768d1f608cac" alt="Pet adoption center" class="img-fluid rounded shadow">
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h4 mb-0">Make a Donation</h2>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('donate') }}">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-4">
+                            <label class="form-label">Choose an Amount</label>
+                            <div class="row row-cols-2 row-cols-sm-4 g-2 mb-3">
+                                <div class="col">
+                                    <input type="radio" class="btn-check" name="donationAmount" id="amount10" autocomplete="off" value="10">
+                                    <label class="btn btn-outline-primary w-100" for="amount10">$10</label>
+                                </div>
+                                <div class="col">
+                                    <input type="radio" class="btn-check" name="donationAmount" id="amount25" autocomplete="off" value="25">
+                                    <label class="btn btn-outline-primary w-100" for="amount25">$25</label>
+                                </div>
+                                <div class="col">
+                                    <input type="radio" class="btn-check" name="donationAmount" id="amount50" autocomplete="off" value="50">
+                                    <label class="btn btn-outline-primary w-100" for="amount50">$50</label>
+                                </div>
+                                <div class="col">
+                                    <input type="radio" class="btn-check" name="donationAmount" id="amount100" autocomplete="off" value="100">
+                                    <label class="btn btn-outline-primary w-100" for="amount100">$100</label>
+                                </div>
+                            </div>
+
+                            {{ form.amount.label(class="form-label") }}
+                            {% if form.amount.errors %}
+                                {{ form.amount(class="form-control is-invalid", placeholder="Enter custom amount") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.amount.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.amount(class="form-control", placeholder="Enter custom amount") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.message.label(class="form-label") }}
+                            {{ form.message(class="form-control", rows=3) }}
+                        </div>
+
+                        <div class="mb-4 form-check">
+                            {{ form.is_anonymous(class="form-check-input") }}
+                            {{ form.is_anonymous.label(class="form-check-label") }}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Payment Method</label>
+                            <div class="card">
+                                <div class="card-body bg-light">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" checked>
+                                        <label class="form-check-label" for="creditCard">
+                                            <i class="fab fa-cc-visa me-2"></i>
+                                            <i class="fab fa-cc-mastercard me-2"></i>
+                                            <i class="fab fa-cc-amex me-2"></i>
+                                            Credit Card
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="paypal">
+                                        <label class="form-check-label" for="paypal">
+                                            <i class="fab fa-paypal me-2"></i>
+                                            PayPal
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="bankTransfer">
+                                        <label class="form-check-label" for="bankTransfer">
+                                            <i class="fas fa-university me-2"></i>
+                                            Bank Transfer
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How Donations Help -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">How Your <span class="text-primary">Donations Help</span></h2>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-circle bg-primary text-white mb-3">
+                                <i class="fas fa-medkit fa-2x"></i>
+                            </div>
+                            <h3 class="h4">Medical Care</h3>
+                            <p>Provides vaccinations, spay/neuter surgeries, and treatment for sick or injured animals.</p>
+                            <div class="progress mt-3">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="small text-muted mt-2">$7,500 raised of $10,000 goal</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-circle bg-primary text-white mb-3">
+                                <i class="fas fa-home fa-2x"></i>
+                            </div>
+                            <h3 class="h4">Shelter & Food</h3>
+                            <p>Ensures all animals have a safe place to stay and nutritious meals while awaiting adoption.</p>
+                            <div class="progress mt-3">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="small text-muted mt-2">$6,000 raised of $10,000 goal</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-circle bg-primary text-white mb-3">
+                                <i class="fas fa-hands-helping fa-2x"></i>
+                            </div>
+                            <h3 class="h4">Rescue Operations</h3>
+                            <p>Supports our team in rescuing animals from dangerous situations and providing rehabilitation.</p>
+                            <div class="progress mt-3">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="small text-muted mt-2">$4,000 raised of $10,000 goal</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Donations -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="h5 mb-0">Recent Donations</h3>
+                </div>
+                <div class="card-body">
+                    {% if recent_donations %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Donor</th>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for donation in recent_donations %}
+                                        <tr>
+                                            <td>
+                                                {% if donation.user_id and donation.donor %}
+                                                    {{ donation.donor.username }}
+                                                {% else %}
+                                                    Anonymous
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ donation.donation_date.strftime('%b %d, %Y') }}</td>
+                                            <td>${{ "%.2f"|format(donation.amount) }}</td>
+                                            <td>{{ donation.message|truncate(50) if donation.message else "—" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <p>No donations yet. Be the first to support our cause!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

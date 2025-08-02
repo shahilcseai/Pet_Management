@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}Paw-Connect Pet Adoption{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-carousel">
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="hero-img" style="background-image: url('https://images.unsplash.com/photo-1523803563411-4622191d77f1');">
+                        <div class="carousel-caption text-start">
+                            <h1>Find Your Forever Friend</h1>
+                            <p>Give a pet a loving home and change both your lives forever.</p>
+                            <a href="{{ url_for('pet_listing') }}" class="btn btn-primary btn-lg">Adopt Now</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="hero-img" style="background-image: url('https://images.unsplash.com/photo-1450778869180-41d0601e046e');">
+                        <div class="carousel-caption text-start">
+                            <h1>Make a Difference</h1>
+                            <p>Your donation helps us provide care for animals in need.</p>
+                            <a href="{{ url_for('donate') }}" class="btn btn-primary btn-lg">Support Us</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="hero-img" style="background-image: url('https://images.unsplash.com/photo-1525253086316-d0c936c814f8');">
+                        <div class="carousel-caption text-start">
+                            <h1>Everything Your Pet Needs</h1>
+                            <p>Visit our pet store for quality foods, toys, and accessories.</p>
+                            <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg">Shop Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Mission Statement -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="display-5 fw-bold text-primary">Our Mission</h2>
+                <p class="lead">At Paw-Connect, we're dedicated to finding loving homes for animals in need. We believe every pet deserves a caring family and a second chance at happiness.</p>
+                <p>Through our adoption services, community education, and pet care resources, we strive to create a world where no animal is left without a home.</p>
+                <a href="{{ url_for('donate') }}" class="btn btn-primary mt-3">Support Our Cause</a>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1599392622119-253dffcfea50" alt="Animal rescue" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Pets -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="display-6 text-center mb-5">Meet Some of Our <span class="text-primary">Adorable Friends</span></h2>
+        
+        {% if featured_pets %}
+        <div class="row">
+            {% for pet in featured_pets %}
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card pet-card h-100">
+                    {% if pet.image_filename %}
+                    <img src="{{ url_for('static', filename='uploads/' + pet.image_filename) }}" class="card-img-top pet-thumbnail" alt="{{ pet.name }}">
+                    {% else %}
+                    <img src="{% if pet.species == 'dog' %}https://images.unsplash.com/photo-1730665231567-2b176b998e39{% elif pet.species == 'cat' %}https://images.unsplash.com/photo-1443806798002-651c462956ff{% else %}https://images.unsplash.com/photo-1689969936663-8ba5ba3c1d64{% endif %}" class="card-img-top pet-thumbnail" alt="{{ pet.name }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ pet.name }}</h5>
+                        <p class="card-text text-muted">{{ pet.breed or pet.species.capitalize() }}</p>
+                        <p class="card-text">{{ pet.description|truncate(100) }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <a href="{{ url_for('pet_detail', pet_id=pet.id) }}" class="btn btn-outline-primary w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('pet_listing') }}" class="btn btn-primary btn-lg">View All Pets</a>
+        </div>
+        {% else %}
+        <div class="text-center">
+            <p>No pets are currently available for adoption. Please check back soon!</p>
+            <a href="{{ url_for('pet_listing') }}" class="btn btn-primary">View All Pets</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Pet Match Banner -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h2 class="display-6 mb-3">Find Your <span class="fw-bold">Perfect Pet Match</span></h2>
+                <p class="lead mb-4">Not sure which pet is right for you? Answer a few simple questions about your lifestyle and preferences, and we'll match you with pets that fit your life perfectly.</p>
+                <a href="{{ url_for('pet_match') }}" class="btn btn-light btn-lg">
+                    <i class="fas fa-heart me-2"></i>Get Matched Now
+                </a>
+            </div>
+            <div class="col-lg-5 mt-4 mt-lg-0">
+                <div class="card border-0 rounded-3 shadow-lg position-relative" style="transform: rotate(3deg);">
+                    <img src="https://images.unsplash.com/photo-1560807707-8cc77767d783" class="card-img rounded-3" alt="Pet match" style="height: 300px; object-fit: cover;">
+                    <div class="position-absolute top-0 end-0 p-3">
+                        <div class="bg-warning text-dark p-2 rounded-pill fw-bold">
+                            <i class="fas fa-thumbs-up me-1"></i> 95% Success Rate
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="display-6 text-center mb-5">How <span class="text-primary">Adoption Works</span></h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-circle bg-primary text-white mb-3">
+                            <i class="fas fa-search fa-2x"></i>
+                        </div>
+                        <h3 class="h4">1. Find Your Match</h3>
+                        <p>Browse through our available pets to find the perfect companion for your family.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-circle bg-primary text-white mb-3">
+                            <i class="fas fa-clipboard-list fa-2x"></i>
+                        </div>
+                        <h3 class="h4">2. Application</h3>
+                        <p>Complete our adoption application and receive approval from our adoption team.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-circle bg-primary text-white mb-3">
+                            <i class="fas fa-home fa-2x"></i>
+                        </div>
+                        <h3 class="h4">3. Welcome Home</h3>
+                        <p>Bring your new family member home and start your journey together.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Donation & Recent Donors -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7">
+                <h2 class="display-6 mb-4">Help Us <span class="text-primary">Make a Difference</span></h2>
+                <p class="lead">Your donations help us provide medical care, food, shelter, and love to animals in need.</p>
+                <p>Every contribution, big or small, makes a meaningful impact on the lives of our furry friends.</p>
+                <div class="mt-4">
+                    <img src="https://images.unsplash.com/photo-1617835963886-d504ab3cca44" alt="Animal rescue" class="img-fluid rounded shadow-sm">
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="h5 mb-0">Recent Supporters</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_donations %}
+                            <div class="recent-donations">
+                                {% for donation in recent_donations %}
+                                <div class="donation-item">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <div>
+                                            <strong>{% if donation.user_id and donation.donor %}{{ donation.donor.username }}{% else %}Anonymous{% endif %}</strong>
+                                            <small class="text-muted d-block">{{ donation.donation_date.strftime('%B %d, %Y') }}</small>
+                                        </div>
+                                        <div class="donation-amount">${{ "%.2f"|format(donation.amount) }}</div>
+                                    </div>
+                                    {% if donation.message %}
+                                    <p class="small text-muted mb-2">"{{ donation.message }}"</p>
+                                    {% endif %}
+                                    <hr>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-center">Be the first to donate and support our cause!</p>
+                        {% endif %}
+                        <div class="text-center mt-3">
+                            <a href="{{ url_for('donate') }}" class="btn btn-primary btn-lg">Make a Donation</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pet Store Preview -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="display-6 text-center mb-5">Shop Our <span class="text-primary">Pet Store</span></h2>
+        <div class="row">
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card product-card h-100">
+                    <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b" class="card-img-top product-thumbnail" alt="Dog and cat food">
+                    <div class="card-body">
+                        <h5 class="card-title">Pet Food</h5>
+                        <p class="card-text">Quality nutrition for dogs, cats, and small animals.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card product-card h-100">
+                    <img src="https://images.unsplash.com/photo-1516750105099-4b8a83e217ee" class="card-img-top product-thumbnail" alt="Pet toys">
+                    <div class="card-body">
+                        <h5 class="card-title">Toys & Accessories</h5>
+                        <p class="card-text">Fun and engaging toys for your furry friends.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card product-card h-100">
+                    <img src="https://images.unsplash.com/photo-1608823135985-43528597413e" class="card-img-top product-thumbnail" alt="Pet bedding">
+                    <div class="card-body">
+                        <h5 class="card-title">Beds & Comfort</h5>
+                        <p class="card-text">Comfortable bedding for a good night's sleep.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card product-card h-100">
+                    <img src="https://images.unsplash.com/photo-1606214174556-13d0ec830778" class="card-img-top product-thumbnail" alt="Pet grooming supplies">
+                    <div class="card-body">
+                        <h5 class="card-title">Grooming Supplies</h5>
+                        <p class="card-text">Everything you need to keep your pet looking their best.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg">Visit Our Store</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
