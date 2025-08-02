@@ -1,0 +1,435 @@
+/* Main Colors */
+:root {
+    --primary-color: #e9506a;
+    --primary-dark: #c13f57;
+    --primary-light: #f17a8f;
+    --secondary-color: #8a304e;
+    --accent-color: #ffd0d8;
+    --text-color: #444444;
+    --light-bg: #fef6f7;
+    
+    /* Dark Mode Colors */
+    --dark-primary: #ff6384;
+    --dark-primary-dark: #e3476a;
+    --dark-primary-light: #ff8ca3;
+    --dark-secondary: #9d3463;
+    --dark-background: #121212;
+    --dark-surface: #242424;
+    --dark-text: #e0e0e0;
+}
+
+/* Bootstrap Overrides */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--primary-dark) !important;
+    border-color: var(--primary-dark) !important;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+/* General Styles */
+body {
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-color);
+    background-color: #f8f9fa;
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--primary-dark);
+}
+
+/* Hero Section */
+.hero-section {
+    margin-bottom: 2rem;
+}
+
+.hero-img {
+    height: 500px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.hero-img::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 100%);
+}
+
+.carousel-caption {
+    text-align: left;
+    left: 10%;
+    right: 40%;
+    bottom: 30%;
+}
+
+.carousel-caption h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+/* Cards */
+.card {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+}
+
+.card-header {
+    border-bottom: none;
+}
+
+/* Pet Cards */
+.pet-card .card-img-top {
+    height: 220px;
+    object-fit: cover;
+}
+
+.pet-thumbnail {
+    height: 220px;
+    object-fit: cover;
+}
+
+.pet-detail-image img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+}
+
+.pet-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+}
+
+/* Product Cards */
+.product-card .card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.product-img-wrapper {
+    position: relative;
+}
+
+.product-category-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+}
+
+.product-price {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Icon Circles */
+.icon-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* Footer */
+.footer {
+    background-color: #343a40;
+    color: white;
+    padding: 3rem 0;
+}
+
+.footer a.text-white {
+    transition: color 0.3s ease;
+}
+
+.footer a.text-white:hover {
+    color: var(--accent-color) !important;
+    text-decoration: none;
+}
+
+/* Donation Section */
+.donation-item {
+    margin-bottom: 0.5rem;
+}
+
+.donation-amount {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* Forms */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 0.25rem rgba(233, 80, 106, 0.25);
+}
+
+/* Cart Styles */
+.product-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+}
+
+.cart-item {
+    transition: background-color 0.3s ease;
+}
+
+.cart-item:hover {
+    background-color: rgba(233, 80, 106, 0.05);
+}
+
+.item-quantity {
+    text-align: center;
+    font-weight: bold;
+}
+
+.quantity-increase, .quantity-decrease {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.quantity-increase:hover, .quantity-decrease:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Checkout Styles */
+.checkout-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding: 0;
+    position: relative;
+}
+
+.checkout-steps::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #dee2e6;
+    z-index: 0;
+}
+
+.checkout-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+    border: 2px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.step-active .step-number {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.step-completed .step-number {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: white;
+}
+
+/* Dark Mode Specific Styles */
+[data-bs-theme="dark"] {
+    color-scheme: dark;
+}
+
+[data-bs-theme="dark"] body {
+    color: var(--dark-text);
+    background-color: var(--dark-background);
+}
+
+[data-bs-theme="dark"] .card {
+    background-color: var(--dark-surface);
+    border-color: #444;
+}
+
+[data-bs-theme="dark"] .navbar-dark.bg-primary {
+    background-color: var(--dark-secondary) !important;
+}
+
+[data-bs-theme="dark"] .text-primary {
+    color: var(--dark-primary) !important;
+}
+
+[data-bs-theme="dark"] .btn-primary {
+    background-color: var(--dark-primary);
+    border-color: var(--dark-primary);
+}
+
+[data-bs-theme="dark"] .btn-primary:hover,
+[data-bs-theme="dark"] .btn-primary:focus,
+[data-bs-theme="dark"] .btn-primary:active {
+    background-color: var(--dark-primary-dark) !important;
+    border-color: var(--dark-primary-dark) !important;
+}
+
+[data-bs-theme="dark"] .btn-outline-primary {
+    color: var(--dark-primary);
+    border-color: var(--dark-primary);
+}
+
+[data-bs-theme="dark"] .btn-outline-primary:hover,
+[data-bs-theme="dark"] .btn-outline-primary:focus,
+[data-bs-theme="dark"] .btn-outline-primary:active {
+    background-color: var(--dark-primary) !important;
+    border-color: var(--dark-primary) !important;
+    color: var(--dark-background) !important;
+}
+
+[data-bs-theme="dark"] .donation-amount,
+[data-bs-theme="dark"] .product-price {
+    color: var(--dark-primary);
+}
+
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus {
+    border-color: var(--dark-primary-light);
+    box-shadow: 0 0 0 0.25rem rgba(255, 99, 132, 0.25);
+}
+
+[data-bs-theme="dark"] .hero-img::before {
+    background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 100%);
+}
+
+[data-bs-theme="dark"] .dropdown-menu {
+    background-color: var(--dark-surface);
+    border-color: #444;
+}
+
+[data-bs-theme="dark"] .dropdown-item {
+    color: var(--dark-text);
+}
+
+[data-bs-theme="dark"] .dropdown-item:hover {
+    background-color: #333;
+}
+
+[data-bs-theme="dark"] .step-number {
+    background-color: var(--dark-surface);
+    border-color: #555;
+}
+
+/* Media Queries */
+@media (max-width: 992px) {
+    .carousel-caption {
+        right: 10%;
+        bottom: 20%;
+    }
+    
+    .carousel-caption h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-img {
+        height: 400px;
+    }
+    
+    .pet-detail-image img {
+        height: 350px;
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-caption {
+        right: 5%;
+        bottom: 10%;
+    }
+    
+    .carousel-caption h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-img {
+        height: 350px;
+    }
+}
+
+@media (max-width: 576px) {
+    .carousel-caption {
+        bottom: 5%;
+    }
+    
+    .carousel-caption h1 {
+        font-size: 1.5rem;
+    }
+    
+    .hero-img {
+        height: 300px;
+    }
+}

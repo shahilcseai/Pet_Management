@@ -1,0 +1,134 @@
+/* Animation and Transition Styles */
+
+/* Dark Mode Transition */
+html {
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+body, 
+.card, 
+.navbar, 
+.alert, 
+.btn, 
+.form-control, 
+.modal-content,
+.dropdown-menu,
+.list-group-item {
+    transition: all 0.3s ease;
+}
+
+/* Hover Animations */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="dark"] .card:hover {
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.05);
+}
+
+/* Button Animations */
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+/* Image Animations */
+.product-img, .pet-img {
+    transition: transform 0.5s ease, filter 0.3s ease;
+}
+
+.product-img:hover, .pet-img:hover {
+    transform: scale(1.03);
+}
+
+/* Navigation Link Animation */
+.navbar-nav .nav-link {
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: currentColor;
+    transition: width 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover::after {
+    width: 100%;
+}
+
+/* Cart Button Animation */
+@keyframes cartBounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-8px);}
+    60% {transform: translateY(-4px);}
+}
+
+.cart-added {
+    animation: cartBounce 0.8s ease;
+}
+
+/* Dark Mode-specific Styles */
+[data-bs-theme="dark"] {
+    --bs-body-bg: #121212;
+    --bs-body-color: #e0e0e0;
+    --bs-card-bg: #242424;
+    --bs-border-color: #444;
+}
+
+[data-bs-theme="dark"] .navbar-dark.bg-primary {
+    background-color: #7d2f51 !important;
+}
+
+[data-bs-theme="dark"] .btn-primary {
+    background-color: #9d3463;
+    border-color: #9d3463;
+}
+
+[data-bs-theme="dark"] .btn-primary:hover {
+    background-color: #b03970;
+    border-color: #b03970;
+}
+
+[data-bs-theme="dark"] .footer {
+    background-color: #1a1a1a !important;
+}
+
+/* Page Transition */
+.page-transition {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Input Focus Animation */
+.form-control:focus {
+    transform: translateY(-2px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
